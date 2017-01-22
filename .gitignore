@@ -11,6 +11,9 @@
 # Maven build files
 target
 
+# Built JS
+static
+
 # Custom project ignored files and directories
 log
 

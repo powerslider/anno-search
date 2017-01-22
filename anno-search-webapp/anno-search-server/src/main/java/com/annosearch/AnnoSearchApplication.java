@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Main Spring Boot application class for the Semantic News Map application.
+ * Main Spring Boot application class for the Anno Search application.
  *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov@ontotext.com>
  * @since 22 January 2017
