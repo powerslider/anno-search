@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
@@ -21,6 +23,8 @@ import static com.annosearch.parse.AnnotatedDocumentFields.*;
  * @since 24-Jan-2017
  */
 public class AnnotatedDocumentParser {
+
+    private static final Pattern DOC_ID_PATTERN = Pattern.compile(".*\\/(\\d+)\\.json");
 
     private String dataSourcePath;
 
@@ -50,6 +54,7 @@ public class AnnotatedDocumentParser {
     }
 
     private void listJsonFilesAndParse(File file) {
+
         int c = 0;
         for (File f : file.listFiles()) {
             if (f.isDirectory()) {
@@ -70,14 +75,27 @@ public class AnnotatedDocumentParser {
                 .ofNullable(mainObj.get("sentimentScore"))
                 .orElse(0.0d);
 
+        int id = generateDocId(jsonFile, text);
+
         List<Annotation> annotations = extractAnnotations(entities);
 
         AnnotatedDocument document = new AnnotatedDocument();
+        document.setId(id);
         document.setAnnotations(annotations);
         document.setText(text);
         document.setSentimentScore(sentimentScore);
 
         return document;
+    }
+
+    private int generateDocId(File jsonFile, String text) {
+        Matcher matcher = DOC_ID_PATTERN.matcher(jsonFile.toString());
+        if (matcher.matches()) {
+            int i = Integer.parseInt(matcher.group(1));
+            System.out.println(i);
+            return i;
+        }
+        return text.hashCode();
     }
 
     private List<Annotation> extractAnnotations(JSONObject entities) {

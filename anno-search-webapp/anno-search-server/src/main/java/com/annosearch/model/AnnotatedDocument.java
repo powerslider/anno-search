@@ -8,9 +8,18 @@ import java.util.List;
  */
 public class AnnotatedDocument {
 
+    private int id;
     private String text;
     private double sentimentScore;
     private List<Annotation> annotations;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getText() {
         return text;

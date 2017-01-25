@@ -47,10 +47,14 @@ public class DataStorageService {
         luceneIndexer.createIndex(annotatedDocuments);
     }
 
+    public void search() {
+        luceneIndexer.queryIndex();
+    }
+
     private void storeRawData(List<AnnotatedDocument> annotatedDocuments) {
         // generate raw text map for search results retrieval
         Map<Integer, String> id2Text = annotatedDocuments.stream()
-                .collect(Collectors.toMap(a -> a.getText().hashCode(), AnnotatedDocument::getText));
+                .collect(Collectors.toMap(AnnotatedDocument::getId, AnnotatedDocument::getText));
 
         // save raw text in MapDB and refer by hash code
         mapDBStorage.save(id2Text);

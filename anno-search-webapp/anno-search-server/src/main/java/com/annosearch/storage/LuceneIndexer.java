@@ -5,8 +5,8 @@ import com.annosearch.model.Annotation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -49,6 +49,23 @@ public class LuceneIndexer {
         finish();
     }
 
+    public void queryIndex() {
+        try (Directory indexDirectory = FSDirectory.open(Paths.get(indexPath))) {
+            IndexReader indexReader = DirectoryReader.open(indexDirectory);
+            IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+            Term t = new Term("string", "Google");
+            Query query = new TermQuery(t);
+            TopDocs topDocs = indexSearcher.search(query, 10);
+            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                int docId = scoreDoc.doc;
+                Document indexDoc = indexSearcher.doc(docId);
+                // TODO: extract document fields
+            }
+        } catch (IOException e) {
+            LOG.error("Error querying index {}. ", indexPath, e);
+        }
+    }
+
     private boolean openIndex() {
         try {
             Directory dir = FSDirectory.open(Paths.get(indexPath));
@@ -86,8 +103,9 @@ public class LuceneIndexer {
                 doc.add(new LegacyLongField(END_OFFSET_FIELD, ann.getEndOffset(),  Field.Store.YES));
             }
             doc.add(new LegacyDoubleField(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore(), Field.Store.YES));
-            doc.add(new LegacyLongField(TEXT_ID_FIELD, annDoc.getText().hashCode(), Field.Store.YES));
+            doc.add(new LegacyLongField(TEXT_ID_FIELD, annDoc.getId(), Field.Store.YES));
             try {
+                System.out.println("Index " + annDoc.getId());
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
                 LOG.error("Error adding documents to the index. " + e.getMessage());

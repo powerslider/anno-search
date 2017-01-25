@@ -15,22 +15,32 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 22-January-2017
  */
 @RestController
-@RequestMapping("/api/search")
+@RequestMapping("/api")
 public class AnnoSearchController {
 
-    private final DataStorageService dataIndexingService;
+    private final DataStorageService dataStorageService;
 
     @Autowired
-    public AnnoSearchController(DataStorageService dataIndexingService) {
-        this.dataIndexingService = dataIndexingService;
+    public AnnoSearchController(DataStorageService dataStorageService) {
+        this.dataStorageService = dataStorageService;
     }
 
     @RequestMapping(
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE
+            value = "index",
+            method = RequestMethod.GET
     )
-    public ResponseEntity<?> search() {
-        dataIndexingService.processData();
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> indexData() {
+        dataStorageService.processData();
+        return new ResponseEntity<>("Data successfully indexed", HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "search",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> searchData() {
+        dataStorageService.search();
+        return new ResponseEntity<>("Data successfully indexed", HttpStatus.OK);
     }
 }
