@@ -8,3 +8,21 @@ body {
 label[for=md-input-0]:not([class~=md-empty]) {
     visibility: hidden;
 }
+
+.auto-complete-item {
+    width: 500px;
+}
+
+.tag-item {
+    background: #3c3cab;
+    color: #a4f1ff;
+    margin: 3px;
+    border: 1px;
+    border-radius: 5px;
+    padding: 3px;
+    line-height: 1.5em;
+}
+
+h4 {
+    padding: 4px !important;
+}
