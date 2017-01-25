@@ -8,3 +8,7 @@ body {
 label[for=md-input-0]:not([class~=md-empty]) {
     visibility: hidden;
 }
+
+.auto-complete-item {
+    width: 500px;
+}
