@@ -1,0 +1,8 @@
+<md-list class="felx-container" fxLayout="column">
+  <!--<h3 md-subheader >Results</h3> -->
+  <md-list-item class="flex-item resultitem" *ngFor="let result of results">
+    <md-icon md-list-avatar>beenhere</md-icon>
+    <h4 md-line>{{ result.title }}</h4>
+    <p md-line>{{ result.data }}</p>
+  </md-list-item>
+</md-list>
