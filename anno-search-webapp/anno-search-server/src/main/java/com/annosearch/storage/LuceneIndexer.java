@@ -1,4 +1,4 @@
-package com.annosearch.search;
+package com.annosearch.storage;
 
 import com.annosearch.model.AnnotatedDocument;
 import com.annosearch.model.Annotation;
@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
@@ -31,6 +33,12 @@ public class LuceneIndexer {
 
     private IndexWriter indexWriter;
 
+
+    public static LuceneIndexer newInstance(String indexPath) {
+        return new LuceneIndexer(indexPath);
+    }
+
+
     public LuceneIndexer(String indexPath) {
         this.indexPath = indexPath;
     }
@@ -42,7 +50,8 @@ public class LuceneIndexer {
     }
 
     private boolean openIndex() {
-        try (Directory dir = FSDirectory.open(Paths.get(indexPath))) {
+        try {
+            Directory dir = FSDirectory.open(Paths.get(indexPath));
             Analyzer analyzer = new StandardAnalyzer();
             analyzer.setVersion(Version.LATEST);
             IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
@@ -64,14 +73,20 @@ public class LuceneIndexer {
                 doc.add(new StringField(STRING_FIELD, ann.getString(), Field.Store.YES));
                 doc.add(new StringField(CLASS_FIELD, ann.getClazz(), Field.Store.YES));
                 doc.add(new StringField(TYPE_FIELD, ann.getType(), Field.Store.YES));
-                doc.add(new StringField(STRING_FIELD, ann.getString(), Field.Store.YES));
-                ann.getSubClasses().forEach(s -> doc.add(new StringField(SUBCLASSES_FIELD, s, Field.Store.YES)));
-                ann.getPrefferedLabel().forEach(l -> doc.add(new StringField(PREFERRED_LABEL_FIELD, l, Field.Store.YES)));
+
+                Optional.ofNullable(ann.getSubClasses())
+                        .orElse(new ArrayList<>())
+                        .forEach(s -> doc.add(new StringField(SUBCLASSES_FIELD, s, Field.Store.YES)));
+
+                Optional.ofNullable(ann.getPrefferedLabel())
+                        .orElse(new ArrayList<>())
+                        .forEach(l -> doc.add(new StringField(PREFERRED_LABEL_FIELD, l, Field.Store.YES)));
+
                 doc.add(new LegacyLongField(START_OFFSET_FIELD, ann.getStartOffSet(),  Field.Store.YES));
                 doc.add(new LegacyLongField(END_OFFSET_FIELD, ann.getEndOffset(),  Field.Store.YES));
             }
             doc.add(new LegacyDoubleField(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore(), Field.Store.YES));
-            doc.add(new StringField(TEXT_FIELD, annDoc.getText(), Field.Store.YES));
+            doc.add(new LegacyLongField(TEXT_ID_FIELD, annDoc.getText().hashCode(), Field.Store.YES));
             try {
                 indexWriter.addDocument(doc);
             } catch (IOException e) {

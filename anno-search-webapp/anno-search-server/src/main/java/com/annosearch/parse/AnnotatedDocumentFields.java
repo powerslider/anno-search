@@ -14,6 +14,6 @@ public class AnnotatedDocumentFields {
     public static final String INDICES_FIELD = "indices";
     public static final String START_OFFSET_FIELD = "startOffset";
     public static final String END_OFFSET_FIELD = "endOffset";
-    public static final String TEXT_FIELD = "text";
+    public static final String TEXT_ID_FIELD = "text";
     public static final String SENTIMENT_SCORE_FIELD = "sentimentScore";
 }

@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
@@ -21,13 +22,17 @@ import static com.annosearch.parse.AnnotatedDocumentFields.*;
  */
 public class AnnotatedDocumentParser {
 
-    private String jsonDataSource;
+    private String dataSourcePath;
 
-    private List<AnnotatedDocument> annotatedDocuments;
+    private List<AnnotatedDocument> annotatedDocuments = new ArrayList<>();
+
+    public static AnnotatedDocumentParser newInstance(String dataSourcePath) {
+        return new AnnotatedDocumentParser(dataSourcePath);
+    }
 
 
-    public AnnotatedDocumentParser(String jsonDataSource) {
-        this.jsonDataSource = jsonDataSource;
+    private AnnotatedDocumentParser(String dataSourcePath) {
+        this.dataSourcePath = dataSourcePath;
     }
 
 
@@ -36,21 +41,21 @@ public class AnnotatedDocumentParser {
     }
 
     public AnnotatedDocumentParser parse() {
-        Path path = Paths.get(jsonDataSource);
+        Path path = Paths.get(dataSourcePath);
         if (Files.exists(path)) {
-            for (File file : path.toFile().listFiles()) {
-                listJsonFiles(file);
-            }
+            listJsonFilesAndParse(path.toFile());
         }
 
         return this;
     }
 
-    private void listJsonFiles(File file) {
+    private void listJsonFilesAndParse(File file) {
+        int c = 0;
         for (File f : file.listFiles()) {
             if (f.isDirectory()) {
-                listJsonFiles(f);
+                listJsonFilesAndParse(f);
             } else {
+                System.out.println(++c + "->" + f);
                 annotatedDocuments.add(parseDocument(f));
             }
         }
@@ -61,7 +66,9 @@ public class AnnotatedDocumentParser {
 
         JSONObject entities = (JSONObject) mainObj.get("entities");
         String text = (String) mainObj.get("text");
-        double sentimentScore = (double) mainObj.get("sentimentScore");
+        Double sentimentScore = (Double) Optional
+                .ofNullable(mainObj.get("sentimentScore"))
+                .orElse(0.0d);
 
         List<Annotation> annotations = extractAnnotations(entities);
 
