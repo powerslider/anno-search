@@ -1,8 +1,16 @@
 <md-toolbar class="flex-container" fxLayoutAlign="center" color="primary">
   <md-input-container>
-    <input md-input placeholder="Search" value="{{ searchText }}">
+    <input md-input placeholder="Search" [(ngModel)]="searchText" (keyup)="onKey()">
   </md-input-container>
   <button md-mini-fab (click)="onSearchClicked()">
     <md-icon>search</md-icon>
   </button>
 </md-toolbar>
+<div>
+  <md-list class="flex-container" fxLayout="column" fxLayoutAlign="center center">
+    <md-list-item class="flex-item auto-complete-item" *ngFor="let result of results">
+      <h4 md-line>{{ result.title }}</h4>
+      <p md-line>{{ result.data }}</p>
+    </md-list-item>
+  </md-list>
+</div>
