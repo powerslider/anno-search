@@ -10,7 +10,7 @@
   <md-list class="flex-container" fxLayout="column" fxLayoutAlign="center center">
     <md-list-item class="flex-item auto-complete-item" *ngFor="let result of results">
       <h4 md-line>{{ result.title }}</h4>
-      <p md-line>{{ result.data }}</p>
+      <p md-line><span class="tag-item" template="ngFor let item of result.data">{{ item }}</span></p>
     </md-list-item>
   </md-list>
 </div>
