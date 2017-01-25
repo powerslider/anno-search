@@ -1,8 +1,10 @@
 package com.annosearch.search;
 
 import com.annosearch.model.AnnotatedDocument;
+import com.annosearch.model.Annotation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -14,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
 /**
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
@@ -54,19 +58,26 @@ public class LuceneIndexer {
     }
 
     private void addDocuments(List<AnnotatedDocument> annotatedDocuments) {
-
-//        for (AnnotatedDocument annDoc : annotatedDocuments) {
-//            Document doc = new Document();
-//            doc.add(new StringField(field, (String) object.get(field), Field.Store.NO));
-//            doc.add(new LegacyLongField(field, (long) object.get(field), Field.Store.YES));
-//            doc.add(new LegacyDoubleField(field, (double) object.get(field), Field.Store.YES));
-//            doc.add(new StringField(field, object.get(field).toString(), Field.Store.YES));
-//            try {
-//                indexWriter.addDocument(doc);
-//            } catch (IOException ex) {
-//                System.err.println("Error adding documents to the index. " + ex.getMessage());
-//            }
-//        }
+        for (AnnotatedDocument annDoc : annotatedDocuments) {
+            Document doc = new Document();
+            for (Annotation ann : annDoc.getAnnotations()) {
+                doc.add(new StringField(STRING_FIELD, ann.getString(), Field.Store.YES));
+                doc.add(new StringField(CLASS_FIELD, ann.getClazz(), Field.Store.YES));
+                doc.add(new StringField(TYPE_FIELD, ann.getType(), Field.Store.YES));
+                doc.add(new StringField(STRING_FIELD, ann.getString(), Field.Store.YES));
+                ann.getSubClasses().forEach(s -> doc.add(new StringField(SUBCLASSES_FIELD, s, Field.Store.YES)));
+                ann.getPrefferedLabel().forEach(l -> doc.add(new StringField(PREFERRED_LABEL_FIELD, l, Field.Store.YES)));
+                doc.add(new LegacyLongField(START_OFFSET_FIELD, ann.getStartOffSet(),  Field.Store.YES));
+                doc.add(new LegacyLongField(END_OFFSET_FIELD, ann.getEndOffset(),  Field.Store.YES));
+            }
+            doc.add(new LegacyDoubleField(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore(), Field.Store.YES));
+            doc.add(new StringField(TEXT_FIELD, annDoc.getText(), Field.Store.YES));
+            try {
+                indexWriter.addDocument(doc);
+            } catch (IOException e) {
+                LOG.error("Error adding documents to the index. " + e.getMessage());
+            }
+        }
     }
 
     private void finish() {

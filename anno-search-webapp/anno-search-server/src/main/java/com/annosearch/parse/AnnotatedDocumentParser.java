@@ -1,4 +1,4 @@
-package com.annosearch.search;
+package com.annosearch.parse;
 
 import com.annosearch.model.AnnotatedDocument;
 import com.annosearch.model.Annotation;
@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
 /**
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
@@ -84,24 +86,24 @@ public class AnnotatedDocumentParser {
                 for (Object k : ann1.keySet()) {
                     Object v = ann1.get(k);
                     switch ((String) k) {
-                        case "string":
+                        case STRING_FIELD:
                             currentAnnotation.setString((String) v);
                             break;
-                        case "class":
+                        case CLASS_FIELD:
                             currentAnnotation.setClazz((String) v);
                             break;
-                        case "preferredLabel":
+                        case PREFERRED_LABEL_FIELD:
                             currentAnnotation.setPreferredLabel((List<String>) v);
                             break;
-                        case "type":
+                        case TYPE_FIELD:
                             currentAnnotation.setType((String) v);
                             break;
-                        case "indices":
+                        case INDICES_FIELD:
                             List<Long> indices = (List<Long>) v;
                             currentAnnotation.setStartOffSet(indices.get(0));
                             currentAnnotation.setEndOffset(indices.get(1));
                             break;
-                        case "subclasses":
+                        case SUBCLASSES_FIELD:
                             currentAnnotation.setSubClasses((List<String>) v);
                             break;
                     }

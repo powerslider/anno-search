@@ -2,7 +2,7 @@ package com.annosearch.service;
 
 import com.annosearch.model.AnnotatedDocument;
 import com.annosearch.model.JsonDataIndexConfiguration;
-import com.annosearch.search.AnnotatedDocumentParser;
+import com.annosearch.parse.AnnotatedDocumentParser;
 import com.annosearch.search.LuceneIndexer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
