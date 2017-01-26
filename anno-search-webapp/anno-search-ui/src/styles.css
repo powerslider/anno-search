@@ -17,6 +17,7 @@ label[for=md-input-0]:not([class~=md-empty]) {
     background: #fbfbfb;
     border-radius: 10px;
     box-shadow: 0px 0px 5px #a4a4a4;
+    cursor: pointer;
 }
 
 .auto-complete-item {
@@ -35,6 +36,6 @@ label[for=md-input-0]:not([class~=md-empty]) {
     font-weight: 600;
 }
 
-h4 {
+.entity-name {
     padding: 4px !important;
 }
