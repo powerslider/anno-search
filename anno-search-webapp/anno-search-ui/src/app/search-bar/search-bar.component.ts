@@ -11,21 +11,26 @@ export class SearchBarComponent implements OnInit {
 
   searchText: string = '';
   results: ResultAuto[] = [];
+
   constructor(private resultService: SearchResultsService) { }
 
   ngOnInit() {
-
   }
 
   onKey() {
-    this.resultService.
-      getAutoResults(this.searchText).
-      subscribe(x => this.results = x);
+    this.showSuggestionsList();
   }
 
   onSearchClicked() {
-    this.resultService.
-      getAutoResults(this.searchText).
-      subscribe(x => this.results = x);
+    this.showSuggestionsList();
+  }
+
+  showSuggestionsList() {
+    this.resultService.setSearchText(this.searchText);
+  }
+
+  onSuggestionClicked(filter: ResultAuto) {
+    this.resultService.setSuggestion(filter);
+    this.resultService.resultsAuto = [];
   }
 }
