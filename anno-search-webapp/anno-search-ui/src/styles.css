@@ -9,18 +9,30 @@ label[for=md-input-0]:not([class~=md-empty]) {
     visibility: hidden;
 }
 
+.result-item {
+    padding: 6px;
+}
+
+.result-item:hover {
+    background: #fbfbfb;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px #a4a4a4;
+}
+
 .auto-complete-item {
     width: 500px;
 }
 
 .tag-item {
     background: #3c3cab;
-    color: #a4f1ff;
+    color: #fff;
     margin: 3px;
     border: 1px;
     border-radius: 5px;
     padding: 3px;
     line-height: 1.5em;
+    display: inline-block;
+    font-weight: 600;
 }
 
 h4 {

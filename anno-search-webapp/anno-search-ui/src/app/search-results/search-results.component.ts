@@ -13,6 +13,5 @@ export class SearchResultsComponent implements OnInit {
   constructor(private resultService: SearchResultsService) { }
 
   ngOnInit() {
-    //this.results = this.resultService.getAutoResults();
   }
 }

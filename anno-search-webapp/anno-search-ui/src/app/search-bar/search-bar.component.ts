@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { SearchResultsService } from '../search-results.service';
-import { ResultAuto } from '../model/result.auto';
+import { Entity } from '../model/entity';
 
 @Component({
   selector: 'app-search-bar',
@@ -10,22 +10,27 @@ import { ResultAuto } from '../model/result.auto';
 export class SearchBarComponent implements OnInit {
 
   searchText: string = '';
-  results: ResultAuto[] = [];
+  results: Entity[] = [];
+
   constructor(private resultService: SearchResultsService) { }
 
   ngOnInit() {
-
   }
 
   onKey() {
-    this.resultService.
-      getAutoResults(this.searchText).
-      subscribe(x => this.results = x);
+    this.showSuggestionsList();
   }
 
   onSearchClicked() {
-    this.resultService.
-      getAutoResults(this.searchText).
-      subscribe(x => this.results = x);
+    this.showSuggestionsList();
+  }
+
+  showSuggestionsList() {
+    this.resultService.setSearchText(this.searchText);
+  }
+
+  onSuggestionClicked(filter: Entity) {
+    this.resultService.setSuggestion(filter);
+    this.resultService.resultsAuto = [];
   }
 }
