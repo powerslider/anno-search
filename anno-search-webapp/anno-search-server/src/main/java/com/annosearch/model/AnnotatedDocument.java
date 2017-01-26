@@ -10,6 +10,7 @@ public class AnnotatedDocument {
 
     private int id;
     private String text;
+    private String title;
     private double sentimentScore;
     private List<Annotation> annotations;
 
@@ -43,5 +44,13 @@ public class AnnotatedDocument {
 
     public void setAnnotations(List<Annotation> annotations) {
         this.annotations = annotations;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

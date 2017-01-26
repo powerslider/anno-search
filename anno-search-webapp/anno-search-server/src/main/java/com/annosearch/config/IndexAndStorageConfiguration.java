@@ -10,17 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class IndexAndStorageConfiguration {
 
     private String dataSourcePath;
-    private String indexPath;
-    private String storagePath;
+    private String storageRootPath;
 
-
-    public String getIndexPath() {
-        return indexPath;
-    }
-
-    public void setIndexPath(String indexPath) {
-        this.indexPath = indexPath;
-    }
 
     public String getDataSourcePath() {
         return dataSourcePath;
@@ -30,11 +21,11 @@ public class IndexAndStorageConfiguration {
         this.dataSourcePath = dataSourcePath;
     }
 
-    public String getStoragePath() {
-        return storagePath;
+    public String getStorageRootPath() {
+        return storageRootPath;
     }
 
-    public void setStoragePath(String storagePath) {
-        this.storagePath = storagePath;
+    public void setStorageRootPath(String storageRootPath) {
+        this.storageRootPath = storageRootPath;
     }
 }

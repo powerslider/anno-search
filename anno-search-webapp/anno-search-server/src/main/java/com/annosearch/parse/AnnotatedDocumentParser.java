@@ -2,6 +2,7 @@ package com.annosearch.parse;
 
 import com.annosearch.model.AnnotatedDocument;
 import com.annosearch.model.Annotation;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -71,6 +72,9 @@ public class AnnotatedDocumentParser {
 
         JSONObject entities = (JSONObject) mainObj.get("entities");
         String text = (String) mainObj.get("text");
+
+        String title = StringUtils.substringBefore(text, "\n");
+
         Double sentimentScore = (Double) Optional
                 .ofNullable(mainObj.get("sentimentScore"))
                 .orElse(0.0d);
@@ -82,6 +86,7 @@ public class AnnotatedDocumentParser {
         AnnotatedDocument document = new AnnotatedDocument();
         document.setId(id);
         document.setAnnotations(annotations);
+        document.setTitle(title);
         document.setText(text);
         document.setSentimentScore(sentimentScore);
 

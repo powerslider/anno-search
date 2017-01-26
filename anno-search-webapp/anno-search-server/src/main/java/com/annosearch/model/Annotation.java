@@ -48,7 +48,7 @@ public class Annotation {
         this.subClasses = subClasses;
     }
 
-    public List<String> getPrefferedLabel() {
+    public List<String> getPreferredLabel() {
         return prefferedLabel;
     }
 

@@ -31,7 +31,6 @@ public class MapDBStorage {
         try {
             Path path = Paths.get(dbName);
             Files.createDirectories(path.getParent());
-//            Files.createFile(path);
         } catch (IOException e) {
             LOG.error("Error creating {} storage file. ", dbName, e);
         }

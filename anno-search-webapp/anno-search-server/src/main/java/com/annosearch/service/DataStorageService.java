@@ -1,7 +1,7 @@
 package com.annosearch.service;
 
-import com.annosearch.model.AnnotatedDocument;
 import com.annosearch.config.IndexAndStorageConfiguration;
+import com.annosearch.model.AnnotatedDocument;
 import com.annosearch.parse.AnnotatedDocumentParser;
 import com.annosearch.storage.LuceneIndexer;
 import com.annosearch.storage.MapDBStorage;
@@ -32,23 +32,22 @@ public class DataStorageService {
     @Autowired
     public DataStorageService(IndexAndStorageConfiguration dataIndexConfiguration) {
         this.dataIndexConfiguration = dataIndexConfiguration;
-        this.luceneIndexer = LuceneIndexer.newInstance(dataIndexConfiguration.getIndexPath());
-        this.annotatedDocParser = AnnotatedDocumentParser.newInstance(dataIndexConfiguration.getDataSourcePath());
-        this.mapDBStorage = MapDBStorage.newInstance(dataIndexConfiguration.getStoragePath() + "/annDocs.db", "docTextMap");
+        String storageRootPath = dataIndexConfiguration.getStorageRootPath();
+        String dataSourcePath = dataIndexConfiguration.getDataSourcePath();
+
+        this.luceneIndexer = LuceneIndexer.newInstance(storageRootPath);
+        this.annotatedDocParser = AnnotatedDocumentParser.newInstance(dataSourcePath);
+        this.mapDBStorage = MapDBStorage.newInstance(storageRootPath + "/storage/annDocs.db", "docTextMap");
     }
 
     public void processData() {
         // parse data to AnnotatedDocument-s from json
         List<AnnotatedDocument> annotatedDocuments = annotatedDocParser.parse().getAnnotatedDocuments();
 
-        storeRawData(annotatedDocuments);
+//        storeRawData(annotatedDocuments);
 
         // index parsed documents in Lucene
         luceneIndexer.createIndex(annotatedDocuments);
-    }
-
-    public void search() {
-        luceneIndexer.queryIndex();
     }
 
     private void storeRawData(List<AnnotatedDocument> annotatedDocuments) {

@@ -5,8 +5,12 @@ import com.annosearch.model.Annotation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.*;
-import org.apache.lucene.search.*;
+import org.apache.lucene.facet.FacetField;
+import org.apache.lucene.facet.FacetsConfig;
+import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
+import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -31,17 +35,22 @@ public class LuceneIndexer {
 
     private String indexPath;
 
+    private String taxoPath;
+
     private IndexWriter indexWriter;
 
+    private TaxonomyWriter taxonomyWriter;
 
-    public static LuceneIndexer newInstance(String indexPath) {
-        return new LuceneIndexer(indexPath);
+
+    public static LuceneIndexer newInstance(String storageRootPath) {
+        return new LuceneIndexer(storageRootPath);
     }
 
-
-    public LuceneIndexer(String indexPath) {
-        this.indexPath = indexPath;
+    public LuceneIndexer(String storageRootPath) {
+        this.indexPath = storageRootPath + "/index";
+        this.taxoPath = storageRootPath + "/taxonomy";
     }
+
 
     public void createIndex(List<AnnotatedDocument> annotatedDocuments) {
         openIndex();
@@ -49,33 +58,19 @@ public class LuceneIndexer {
         finish();
     }
 
-    public void queryIndex() {
-        try (Directory indexDirectory = FSDirectory.open(Paths.get(indexPath))) {
-            IndexReader indexReader = DirectoryReader.open(indexDirectory);
-            IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-            Term t = new Term("string", "Google");
-            Query query = new TermQuery(t);
-            TopDocs topDocs = indexSearcher.search(query, 10);
-            for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                int docId = scoreDoc.doc;
-                Document indexDoc = indexSearcher.doc(docId);
-                // TODO: extract document fields
-            }
-        } catch (IOException e) {
-            LOG.error("Error querying index {}. ", indexPath, e);
-        }
-    }
-
     private boolean openIndex() {
         try {
-            Directory dir = FSDirectory.open(Paths.get(indexPath));
+            Directory indexDir = FSDirectory.open(Paths.get(indexPath));
+            Directory taxoDir = FSDirectory.open(Paths.get(taxoPath));
+
             Analyzer analyzer = new StandardAnalyzer();
             analyzer.setVersion(Version.LATEST);
             IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 
             //Always overwrite the directory
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-            indexWriter = new IndexWriter(dir, iwc);
+            indexWriter = new IndexWriter(indexDir, iwc);
+            taxonomyWriter = new DirectoryTaxonomyWriter(taxoDir, IndexWriterConfig.OpenMode.CREATE);
             return true;
         } catch (IOException e) {
             LOG.error("Error opening index directory {}", indexPath);
@@ -84,6 +79,8 @@ public class LuceneIndexer {
     }
 
     private void addDocuments(List<AnnotatedDocument> annotatedDocuments) {
+        FacetsConfig facetsConfig = new FacetsConfig();
+
         for (AnnotatedDocument annDoc : annotatedDocuments) {
             Document doc = new Document();
             for (Annotation ann : annDoc.getAnnotations()) {
@@ -91,20 +88,38 @@ public class LuceneIndexer {
                 doc.add(new StringField(CLASS_FIELD, ann.getClazz(), Field.Store.YES));
                 doc.add(new StringField(TYPE_FIELD, ann.getType(), Field.Store.YES));
 
-                Optional.ofNullable(ann.getSubClasses())
-                        .orElse(new ArrayList<>())
-                        .forEach(s -> doc.add(new StringField(SUBCLASSES_FIELD, s, Field.Store.YES)));
+                List<String> subClasses = Optional.ofNullable(ann.getSubClasses())
+                        .orElse(new ArrayList<>());
+                for (String s : subClasses)
+                    doc.add(new StringField(SUBCLASSES_FIELD, s, Field.Store.YES));
 
-                Optional.ofNullable(ann.getPrefferedLabel())
-                        .orElse(new ArrayList<>())
-                        .forEach(l -> doc.add(new StringField(PREFERRED_LABEL_FIELD, l, Field.Store.YES)));
 
-                doc.add(new LegacyLongField(START_OFFSET_FIELD, ann.getStartOffSet(),  Field.Store.YES));
-                doc.add(new LegacyLongField(END_OFFSET_FIELD, ann.getEndOffset(),  Field.Store.YES));
+                List<String> preferredLabels = Optional.ofNullable(ann.getPreferredLabel())
+                        .orElse(new ArrayList<>());
+                for (String l : preferredLabels)
+                    doc.add(new StringField(PREFERRED_LABEL_FIELD, l, Field.Store.YES));
+
+                doc.add(new LongPoint(START_OFFSET_FIELD, ann.getStartOffSet()));
+                doc.add(new StoredField(START_OFFSET_FIELD, ann.getStartOffSet()));
+                doc.add(new LongPoint(END_OFFSET_FIELD, ann.getEndOffset()));
+                doc.add(new StoredField(END_OFFSET_FIELD, ann.getEndOffset()));
+
+                doc.add(new FacetField(ann.getType(), ann.getString()));
+                facetsConfig.setMultiValued(ann.getType(), true);
             }
-            doc.add(new LegacyDoubleField(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore(), Field.Store.YES));
-            doc.add(new LegacyLongField(TEXT_ID_FIELD, annDoc.getId(), Field.Store.YES));
+
+            doc.add(new DoublePoint(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore()));
+            doc.add(new StoredField(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore()));
+            doc.add(new LongPoint(TEXT_ID_FIELD, annDoc.getId()));
+            doc.add(new StoredField(TEXT_ID_FIELD, annDoc.getId()));
+
+            doc.add(new StringField(TITLE_FIELD, annDoc.getTitle(), Field.Store.YES));
+
+            // index raw text but do not store it because it exceeds memory limits
+            doc.add(new TextField(TEXT_FIELD, annDoc.getText(), Field.Store.YES));
+
             try {
+                doc = facetsConfig.build(taxonomyWriter, doc);
                 System.out.println("Index " + annDoc.getId());
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
@@ -116,7 +131,10 @@ public class LuceneIndexer {
     private void finish() {
         try {
             indexWriter.commit();
+            taxonomyWriter.commit();
+
             indexWriter.close();
+            taxonomyWriter.close();
         } catch (IOException ex) {
             LOG.error("Error closing index {}", indexPath);
         }
