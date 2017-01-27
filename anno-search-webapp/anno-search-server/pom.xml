@@ -33,6 +33,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.annosearch</groupId>
             <artifactId>anno-search-ui</artifactId>
             <version>${project.version}</version>

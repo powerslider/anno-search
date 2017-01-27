@@ -38,20 +38,27 @@ public class MapDBStorage {
     }
 
     private void initDB(String dbName, String mapName) {
-        DB db = DBMaker
-                .fileDB(dbName)
-                .fileMmapEnableIfSupported() // Only enable mmap on supported platforms
-                .transactionEnable()
-                .closeOnJvmShutdown()
-                .make();
+        try (DB db = DBMaker
+                    .fileDB(dbName)
+                    .fileMmapEnableIfSupported() // Only enable mmap on supported platforms
+                    .transactionEnable()
+                    .closeOnJvmShutdown()
+                    .make()) {
 
-        this.dbMaker = db
-                .hashMap(mapName, Serializer.INTEGER, Serializer.STRING);
+            this.dbMaker = db
+                    .hashMap(mapName, Serializer.INTEGER, Serializer.STRING);
+        }
     }
 
     public void save(Map<Integer, String> map) {
         try (HTreeMap<Integer, String> persistentMap = this.dbMaker.createOrOpen()) {
             persistentMap.putAll(map);
+        }
+    }
+
+    public String get(int key) {
+        try (HTreeMap<Integer, String> persistentMap = this.dbMaker.createOrOpen()) {
+            return persistentMap.get(key);
         }
     }
 

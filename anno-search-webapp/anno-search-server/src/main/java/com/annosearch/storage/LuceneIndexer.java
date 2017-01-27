@@ -9,6 +9,7 @@ import org.apache.lucene.facet.FacetField;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -83,8 +84,9 @@ public class LuceneIndexer {
 
         for (AnnotatedDocument annDoc : annotatedDocuments) {
             Document doc = new Document();
+
             for (Annotation ann : annDoc.getAnnotations()) {
-                doc.add(new StringField(STRING_FIELD, ann.getString(), Field.Store.YES));
+                doc.add(new Field(STRING_FIELD, ann.getString(), termVectorFieldType()));
                 doc.add(new StringField(CLASS_FIELD, ann.getClazz(), Field.Store.YES));
                 doc.add(new StringField(TYPE_FIELD, ann.getType(), Field.Store.YES));
 
@@ -104,28 +106,39 @@ public class LuceneIndexer {
                 doc.add(new LongPoint(END_OFFSET_FIELD, ann.getEndOffset()));
                 doc.add(new StoredField(END_OFFSET_FIELD, ann.getEndOffset()));
 
-                doc.add(new FacetField(ann.getType(), ann.getString()));
                 facetsConfig.setMultiValued(ann.getType(), true);
+                doc.add(new FacetField(ann.getType(), ann.getString()));
             }
 
             doc.add(new DoublePoint(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore()));
             doc.add(new StoredField(SENTIMENT_SCORE_FIELD, annDoc.getSentimentScore()));
-            doc.add(new LongPoint(TEXT_ID_FIELD, annDoc.getId()));
-            doc.add(new StoredField(TEXT_ID_FIELD, annDoc.getId()));
+
+            doc.add(new StringField(TEXT_ID_FIELD, String.valueOf(annDoc.getId()), Field.Store.YES));
 
             doc.add(new StringField(TITLE_FIELD, annDoc.getTitle(), Field.Store.YES));
 
-            // index raw text but do not store it because it exceeds memory limits
+            // index raw text but do not store it because it will be in MapDB
             doc.add(new TextField(TEXT_FIELD, annDoc.getText(), Field.Store.YES));
 
             try {
                 doc = facetsConfig.build(taxonomyWriter, doc);
-                System.out.println("Index " + annDoc.getId());
+                LOG.info("Indexed doc No. " + annDoc.getId());
                 indexWriter.addDocument(doc);
             } catch (IOException e) {
                 LOG.error("Error adding documents to the index. " + e.getMessage());
             }
         }
+    }
+
+    private FieldType termVectorFieldType() {
+        FieldType type = new FieldType();
+        type.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+        type.setStored(true);
+        type.setStoreTermVectors(true);
+        type.setTokenized(true);
+        type.setStoreTermVectorOffsets(true);
+
+        return type;
     }
 
     private void finish() {

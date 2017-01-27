@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -24,6 +26,8 @@ import static com.annosearch.parse.AnnotatedDocumentFields.*;
  * @since 24-Jan-2017
  */
 public class AnnotatedDocumentParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotatedDocumentParser.class);
 
     private static final Pattern DOC_ID_PATTERN = Pattern.compile(".*\\/(\\d+)\\.json");
 
@@ -61,7 +65,7 @@ public class AnnotatedDocumentParser {
             if (f.isDirectory()) {
                 listJsonFilesAndParse(f);
             } else {
-                System.out.println(++c + "->" + f);
+                LOG.info(++c + "->" + f);
                 annotatedDocuments.add(parseDocument(f));
             }
         }
@@ -97,7 +101,6 @@ public class AnnotatedDocumentParser {
         Matcher matcher = DOC_ID_PATTERN.matcher(jsonFile.toString());
         if (matcher.matches()) {
             int i = Integer.parseInt(matcher.group(1));
-            System.out.println(i);
             return i;
         }
         return text.hashCode();

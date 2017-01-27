@@ -1,17 +1,18 @@
 package com.annosearch.controller;
 
+import com.annosearch.model.AnnotatedDocument;
+import com.annosearch.model.AnnotatedDocumentSearchResult;
 import com.annosearch.service.DataStorageService;
 import com.annosearch.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -42,12 +43,35 @@ public class AnnoSearchController {
     }
 
     @RequestMapping(
-            value = "search",
+            value = "search/annotations",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Map<String, String>> searchData(@RequestParam(value = "query") String annQuery) {
-        Map<String, String> annMap = searchService.searchAnnotations(100, annQuery);
+    public ResponseEntity<Set<Map.Entry<String, String>>> searchAnnotations(@RequestParam(value = "string") String annQuery) {
+        Set<Map.Entry<String, String>> annMap = searchService.searchAnnotations(100, annQuery);
         return new ResponseEntity<>(annMap, HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "search/docs",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<AnnotatedDocumentSearchResult>> searchDocs(
+            @RequestParam(value = "string") String strVal,
+            @RequestParam(value = "type") String typeVal) {
+
+        List<AnnotatedDocumentSearchResult> annDocList = searchService.searchDocuments(100, strVal, typeVal);
+        return new ResponseEntity<>(annDocList, HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "search/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<AnnotatedDocument> searchDocs(@PathVariable("id") String id) {
+        AnnotatedDocument annDoc = searchService.getAnnotatedDocumentPerId(id);
+        return new ResponseEntity<>(annDoc, HttpStatus.OK);
     }
 }

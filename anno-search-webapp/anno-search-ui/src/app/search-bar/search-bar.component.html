@@ -1,17 +1,19 @@
 <md-toolbar class="flex-container" fxLayoutAlign="center" color="primary">
-  <md-input-container>
-    <input md-input placeholder="Search" [(ngModel)]="searchText" (keyup)="onKey()">
-  </md-input-container>
-  <button md-mini-fab (click)="onSearchClicked()">
-    <md-icon>search</md-icon>
-  </button>
+    <md-input-container>
+        <input md-input placeholder="Search" [(ngModel)]="searchText" (keyup)="onKey()">
+    </md-input-container>
+    <button md-mini-fab (click)="onSearchClicked()">
+        <md-icon>search</md-icon>
+    </button>
 </md-toolbar>
 <!-- List with suggestions -->
 <div *ngIf="resultService.showSuggestions">
-  <md-list class="flex-container" fxLayout="column" fxLayoutAlign="center center">
-    <md-list-item class="flex-item result-item auto-complete-item" *ngFor="let result of resultService.resultsAuto">
-      <h4 md-line><button md-button (click)="onSuggestionClicked(result)">{{ result.title }}</button></h4>
-      <p md-line><span class="tag-item" template="ngFor let item of result.data">{{ item }}</span></p>
-    </md-list-item>
-  </md-list>
+    <md-list class="flex-container" fxLayout="column" fxLayoutAlign="center center">
+        <md-list-item class="flex-item result-item auto-complete-item" *ngFor="let result of resultService.resultsAuto">
+            <h4 md-line>
+                <button md-button (click)="onSuggestionClicked(result)">{{ result.title }}</button>
+            </h4>
+            <p md-line><span class="tag-item" template="ngFor let item of result.data">{{ item }}</span></p>
+        </md-list-item>
+    </md-list>
 </div>

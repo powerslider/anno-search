@@ -11,6 +11,7 @@ public class AnnotatedDocument {
     private int id;
     private String text;
     private String title;
+    private String matchedText;
     private double sentimentScore;
     private List<Annotation> annotations;
 
@@ -52,5 +53,13 @@ public class AnnotatedDocument {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getMatchedText() {
+        return matchedText;
+    }
+
+    public void setMatchedText(String matchedText) {
+        this.matchedText = matchedText;
     }
 }

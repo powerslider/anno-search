@@ -1,5 +1,8 @@
 package com.annosearch.search;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -7,6 +10,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
@@ -14,10 +18,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+
+import static com.annosearch.parse.AnnotatedDocumentFields.TEXT_FIELD;
 
 /**
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
@@ -52,7 +58,7 @@ public class Searcher<I> {
     private I userQueryInput;
     private Function<I, Query> queryGenerationFunc;
 
-    public List<Document> search() {
+    public Map<String, Document> search() {
         notNullOrThrow(indexPath, "indexPath");
         notNullOrThrow(userQueryInput, "userQueryInput");
         notNullOrThrow(queryGenerationFunc, "queryGenerationFunc");
@@ -61,25 +67,57 @@ public class Searcher<I> {
             IndexReader indexReader = DirectoryReader.open(indexDirectory);
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 
+            Analyzer analyzer = new StandardAnalyzer();
+
             Query query = queryGenerationFunc.apply(userQueryInput);
 
             TopDocs topDocs = indexSearcher.search(query, topNResults > 0 ? topNResults : 10);
-            List<Document> luceneDocs = new ArrayList<>();
+
+            SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter();
+            Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
+
+            Map<String, Document> luceneDocs = new HashMap<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 int docId = scoreDoc.doc;
                 Document indexDoc = indexSearcher.doc(docId);
-                luceneDocs.add(indexDoc);
+                String text = indexDoc.get(TEXT_FIELD);
+                TokenStream tokenStream = TokenSources.getAnyTokenStream(indexReader, docId, TEXT_FIELD, analyzer);
+                TextFragment[] bestTextFragments = highlighter
+                        .getBestTextFragments(tokenStream, text, false, 4);
+                StringBuilder builder = new StringBuilder();
+                for (TextFragment frag : bestTextFragments) {
+                    if (frag != null && (frag.getScore() > 0)) {
+                        String fr = frag.toString().replaceAll("\\R", ";");
+                        builder.append(fr);
+                    }
+                }
+
+//                String[] strings = indexDoc.getValues(STRING_FIELD);
+//                TokenStream stringTokenStream = TokenSources.getAnyTokenStream(indexReader, docId, STRING_FIELD, analyzer);
+//                for (String s : strings) {
+//                    if (s.length() > query.toString().length()) {
+//                        TextFragment[] strBestTextFragments = highlighter
+//                                .getBestTextFragments(stringTokenStream, s, false, 1);
+//                        for (TextFragment frag : strBestTextFragments) {
+//                            if (frag != null && (frag.getScore() > 0)) {
+//                                System.out.println(frag.toString());
+//                            }
+//                        }
+//                    }
+//                }
+                luceneDocs.put(builder.toString(), indexDoc);
             }
             return luceneDocs;
         } catch (IOException e) {
             LOG.error("Error querying index {}. ", indexPath, e);
+        } catch (InvalidTokenOffsetsException e) {
+            e.printStackTrace();
         }
-        return new ArrayList<>();
+        return new HashMap<>();
     }
 
     private void notNullOrThrow(Object obj, String msg) {
         Optional.ofNullable(obj)
                 .orElseThrow(() -> new IllegalArgumentException(msg + " cannot be null"));
     }
-
 }
