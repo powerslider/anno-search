@@ -26,3 +26,6 @@ mvn spring-boot-run
 ```
 The webapp will be available on *http://localhost:4200*.
 
+## Project presetation
+Presentation is available at *http://slides.com/tsvetandimitrov/annotation#/*.
+
