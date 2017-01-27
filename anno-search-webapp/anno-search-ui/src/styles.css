@@ -39,3 +39,31 @@ label[for=md-input-0]:not([class~=md-empty]) {
 .entity-name {
     padding: 4px !important;
 }
+
+.paragraph {
+  font-family: Inconsolata, Monaco, Consolas;
+}
+
+.anno1 {
+  color: green;
+  padding: 2px;
+  cursor: pointer;
+  border-bottom: 3px solid green;
+  display:inline-block;
+}
+
+.anno2 {
+  color: orange;
+  padding: 2px;
+  cursor: pointer;
+  border-bottom: 3px solid orange;
+  display:inline-block;
+}
+
+.anno1:hover {
+  background: #c3e0c3;
+}
+
+.anno2:hover {
+  background: #ffecc8;
+}
