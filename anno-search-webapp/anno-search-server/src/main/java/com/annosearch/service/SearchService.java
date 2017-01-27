@@ -32,7 +32,7 @@ public class SearchService {
     private static final Logger LOG = LoggerFactory.getLogger(SearchService.class);
 
     private final IndexAndStorageConfiguration dataIndexConfiguration;
-    
+
     private final String indexPath;
 
     @Autowired
