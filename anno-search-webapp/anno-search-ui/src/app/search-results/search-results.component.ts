@@ -20,6 +20,7 @@ export class SearchResultsComponent implements OnInit {
       console.log(x);
       this.resultService.showSuggestions = false;
       this.resultService.showResults = false;
+      this.resultService.showDocument = true;
       this.resultService.document = x;
     });
   }

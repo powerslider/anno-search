@@ -14,6 +14,7 @@ export class SearchResultsService {
   serverUrl: string = "http://localhost:8089/";
   public showSuggestions = false;
   public showResults = false;
+  public showDocument = false;
   private searchText: string;
   public document: AnnoDocument = new AnnoDocument();
   suggestion: Entity;
@@ -36,6 +37,7 @@ export class SearchResultsService {
         this.resultsAuto = x;
         this.showSuggestions = true;
         this.showResults = false;
+        this.showDocument = false;
       });
   }
 
@@ -45,6 +47,7 @@ export class SearchResultsService {
         this.results = x;
         this.showSuggestions = false;
         this.showResults = true;
+        this.showDocument = false;
       });
   }
 
@@ -64,7 +67,12 @@ export class SearchResultsService {
     let arr: Array<any> = res.json();
     console.log(arr);
     return arr.map((xx): Result => {
-      return { title: xx["title"], matchedText: xx["matchedText"], id: xx["id"], sentimentScore: xx["sentimentScore"] };
+      return {
+        title: xx["title"],
+        matchedText: xx["matchedText"],
+        id: xx["id"],
+        sentimentScore: xx["sentimentScore"]
+      };
     });
   }
 
@@ -72,7 +80,12 @@ export class SearchResultsService {
     let obj: any = res.json();
     let annotations: Array<any> = obj["annotations"];
     let annos: AnnotationInfo[] = annotations.map((x): AnnotationInfo => {
-      return { start: x["startOffSet"], end: x["endOffset"], type: x["type"] };
+      return {
+        start: x["startOffSet"],
+        end: x["endOffset"],
+        type: x["type"], 
+        string: x["string"]
+      };
     })
     return {
       title: obj["title"],
