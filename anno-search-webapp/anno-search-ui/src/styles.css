@@ -40,6 +40,17 @@ label[for=md-input-0]:not([class~=md-empty]) {
     padding: 4px !important;
 }
 
+.result-title {
+
+}
+
+.result-matched-text {
+    white-space: normal !important;
+    font-style: italic !important;
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+
 .paragraph {
   font-family: Inconsolata, Monaco, Consolas;
 }
