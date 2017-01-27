@@ -55,26 +55,53 @@ label[for=md-input-0]:not([class~=md-empty]) {
   font-family: Inconsolata, Monaco, Consolas;
 }
 
-.anno1 {
-  color: green;
+.anno {
   padding: 2px;
   cursor: pointer;
-  border-bottom: 3px solid green;
   display:inline-block;
 }
 
-.anno2 {
-  color: orange;
-  padding: 2px;
-  cursor: pointer;
-  border-bottom: 3px solid orange;
-  display:inline-block;
+.anno1 {
+  color: green;
+   border-bottom: 3px solid green;
 }
 
 .anno1:hover {
   background: #c3e0c3;
 }
 
+.anno2 {
+  color: orange;
+  border-bottom: 3px solid orange;
+}
+
 .anno2:hover {
   background: #ffecc8;
+}
+
+.anno3 {
+  color: red;
+  border-bottom: 3px solid red;
+}
+
+.anno3:hover {
+  background: #facfcf;
+}
+
+.anno4 {
+  color: blue;
+  border-bottom: 3px solid blue;
+}
+
+.anno4:hover {
+  background: #bbbbff;
+}
+
+.anno5 {
+  color: purple;
+  border-bottom: 3px solid purple;
+}
+
+.anno5:hover {
+  background: #ea97ea;
 }

@@ -37,8 +37,12 @@ export class ColorParagraphPipe implements PipeTransform {
     return result.join("").replace(/(?:\r\n|\r|\n)/g, '<br />');
   }
 
+  private colors: number = 5;
+  private usedColors: number = 0;
+
   private wrap(value: string, title?: string): string {
     title = title != null ? "title=\"" + title + "\"" : "";
-    return "<span class=\"anno1\" " + title + ">" + value + "</span>";
+    let clas: string = "anno" + (this.usedColors++ % this.colors);
+    return "<span class=\"anno " + clas + "\"" + title + ">" + value + "</span>";
   }
 }
