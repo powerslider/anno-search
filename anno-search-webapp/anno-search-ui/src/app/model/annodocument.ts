@@ -5,6 +5,7 @@ export class AnnoDocument {
     public text: string;
     public annotations: Array<AnnotationInfo> = [];
     public title: string;
+    public sentimentScore: number;
     constructor() {
 
     }

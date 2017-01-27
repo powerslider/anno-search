@@ -14,4 +14,13 @@ export class SearchResultsComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  onResultClicked(result: Result) {
+    this.resultService.fetchDocument(result.id).subscribe(x => {
+      console.log(x);
+      this.resultService.showSuggestions = false;
+      this.resultService.showResults = false;
+      this.resultService.document = x;
+    });
+  }
 }

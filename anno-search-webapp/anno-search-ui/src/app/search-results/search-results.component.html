@@ -1,6 +1,6 @@
-<md-list class="felx-container" fxLayout="column">
+<md-list *ngIf="resultService.showResults" class="felx-container" fxLayout="column">
   <!--<h3 md-subheader >Results</h3> -->
-  <md-list-item class="flex-item result-item" *ngFor="let result of resultService.results">
+  <md-list-item class="flex-item result-item" *ngFor="let result of resultService.results" (click)="onResultClicked(result)">
     <md-icon md-list-avatar>beenhere</md-icon>
     <h4 class="result-title" md-line>{{ result.title }}</h4>
     <p class="result-matched-text" md-line [innerHTML]="result.matchedText"></p>

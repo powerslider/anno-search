@@ -8,7 +8,12 @@ import { AnnotationInfo } from './model/annotation';
 export class ColorParagraphPipe implements PipeTransform {
 
   transform(value: AnnoDocument, args?: any): string {
+    if (value.annotations == null || value.annotations.length == 0) {
+      return "";
+    }
+
     let result: string[] = [];
+
     let annos: AnnotationInfo[] = value.annotations.sort((a, b) => {
       return a.start - b.start;
     });
