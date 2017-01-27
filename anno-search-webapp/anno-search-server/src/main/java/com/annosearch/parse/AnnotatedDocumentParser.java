@@ -29,7 +29,7 @@ public class AnnotatedDocumentParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnotatedDocumentParser.class);
 
-    private static final Pattern DOC_ID_PATTERN = Pattern.compile(".*\\/(\\d+)\\.json");
+    private static final Pattern DOC_ID_PATTERN = Pattern.compile(".*[\\/\\\\](\\d+)\\.json");
 
     private String dataSourcePath;
 
