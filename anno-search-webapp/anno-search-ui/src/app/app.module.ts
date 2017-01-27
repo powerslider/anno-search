@@ -15,12 +15,16 @@ import { FlexLayoutModule} from '@angular/flex-layout';
 import { AppComponent } from './app.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { SearchResultsComponent } from './search-results/search-results.component';
+import { ColorParagraphPipe } from './color-paragraph.pipe';
 
+import { AnnoDocument } from './model/annodocument';
+import { AnnotationInfo } from './model/annotation';
 @NgModule({
   declarations: [
     AppComponent,
     SearchBarComponent,
-    SearchResultsComponent
+    SearchResultsComponent,
+    ColorParagraphPipe
   ],
   imports: [
     BrowserModule,

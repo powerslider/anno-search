@@ -3,6 +3,6 @@
   <md-list-item class="flex-item result-item" *ngFor="let result of resultService.results">
     <md-icon md-list-avatar>beenhere</md-icon>
     <h4 md-line>{{ result.title }}</h4>
-    <p md-line>{{ result.data.text }}</p>
+    <p md-line [innerHTML]="result | colorParagraph"></p>
   </md-list-item>
 </md-list>
