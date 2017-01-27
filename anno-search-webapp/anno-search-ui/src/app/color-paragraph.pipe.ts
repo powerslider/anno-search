@@ -27,9 +27,9 @@ export class ColorParagraphPipe implements PipeTransform {
         result.push(value.text.substring(lastPushed + 1, anno.start));
         lastPushed = anno.start;
       }
-      let p: string = value.text.substring(anno.start, anno.end + 1);
-      result.push(this.wrap(p, anno.type));
-      lastPushed = anno.end;
+      let p: string = value.text.substring(anno.start, anno.end);
+      result.push(this.wrap(p, anno.string + " : " + anno.type));
+      lastPushed = anno.end - 1;
     }
     if (lastPushed + 1 < value.text.length) {
       result.push(value.text.substring(lastPushed + 1));
