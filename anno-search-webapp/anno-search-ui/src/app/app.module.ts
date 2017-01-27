@@ -16,15 +16,15 @@ import { AppComponent } from './app.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { SearchResultsComponent } from './search-results/search-results.component';
 import { ColorParagraphPipe } from './color-paragraph.pipe';
+import { DocumentPreviewComponent } from './document-preview/document-preview.component';
 
-import { AnnoDocument } from './model/annodocument';
-import { AnnotationInfo } from './model/annotation';
 @NgModule({
   declarations: [
     AppComponent,
     SearchBarComponent,
     SearchResultsComponent,
-    ColorParagraphPipe
+    ColorParagraphPipe,
+    DocumentPreviewComponent
   ],
   imports: [
     BrowserModule,
