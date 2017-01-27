@@ -11,7 +11,7 @@
   <md-list class="flex-container" fxLayout="column" fxLayoutAlign="center center">
     <md-list-item class="flex-item result-item auto-complete-item" *ngFor="let result of resultService.resultsAuto" (click)="onSuggestionClicked(result)">
       <h4 md-line class="entity-name">{{ result.title }}</h4>
-      <p md-line><span class="tag-item" template="ngFor let item of result.data">{{ item }}</span></p>
+      <p ><span class="tag-item" >{{ result.type }}</span></p>
     </md-list-item>
   </md-list>
 </div>
