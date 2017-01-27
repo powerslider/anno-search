@@ -1,4 +1,6 @@
 export class Result {
-    title: string;
-    data: any;
+    public id: number;
+    public matchedText: string;
+    public title: string;
+    public sentimentScore: number;
 }
