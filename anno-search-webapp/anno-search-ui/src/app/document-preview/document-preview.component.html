@@ -1,4 +1,4 @@
-<div *ngIf="resultService.showDocument">
+<div *ngIf="resultService.showDocument" class="document-preview">
   <h4 md-line>{{ resultService.document.title }}</h4>
   <p md-line [innerHTML]="resultService.document | colorParagraph"></p>
 </div>
