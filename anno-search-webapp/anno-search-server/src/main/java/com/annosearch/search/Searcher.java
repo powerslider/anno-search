@@ -26,6 +26,8 @@ import java.util.function.Function;
 import static com.annosearch.parse.AnnotatedDocumentFields.TEXT_FIELD;
 
 /**
+ * Utility class used for easy execution of Lucene queries.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 26-Jan-2017
  */

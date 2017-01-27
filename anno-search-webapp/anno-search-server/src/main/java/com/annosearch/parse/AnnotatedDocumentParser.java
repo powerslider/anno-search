@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
 /**
+ * Parser transoforming raw json to an {@link AnnotatedDocument}.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 24-Jan-2017
  */

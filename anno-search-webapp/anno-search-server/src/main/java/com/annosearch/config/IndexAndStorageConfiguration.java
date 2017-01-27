@@ -3,6 +3,8 @@ package com.annosearch.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * Configuration of data and index file paths.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 25-Jan-2017
  */

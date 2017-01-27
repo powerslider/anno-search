@@ -27,6 +27,8 @@ import java.util.Optional;
 import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
 /**
+ * Class responsible for creating different types of Lucene indexes.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 22-Jan-2017
  */

@@ -3,6 +3,8 @@ package com.annosearch.model;
 import java.util.List;
 
 /**
+ * Model class representing a document enriched with metadata (annotations).
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 24-Jan-2017
  */

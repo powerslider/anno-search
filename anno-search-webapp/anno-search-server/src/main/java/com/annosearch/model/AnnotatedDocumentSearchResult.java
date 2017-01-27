@@ -1,6 +1,8 @@
 package com.annosearch.model;
 
 /**
+ * Model class representing a annotated document as a item from search results.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 27-Jan-2017
  */

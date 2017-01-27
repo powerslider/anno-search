@@ -1,6 +1,8 @@
 package com.annosearch.parse;
 
 /**
+ * Field keys of annotation metadata.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 25-Jan-2017
  */

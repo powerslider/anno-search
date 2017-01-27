@@ -16,6 +16,8 @@ import java.util.Set;
 
 
 /**
+ * Controller class for exposing indexed data.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 22-January-2017
  */

@@ -3,6 +3,8 @@ package com.annosearch.model;
 import java.util.List;
 
 /**
+ * Model class representing an annotation with its attributes.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 24-Jan-2017
  */

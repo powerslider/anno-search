@@ -22,6 +22,8 @@ import java.util.*;
 import static com.annosearch.parse.AnnotatedDocumentFields.*;
 
 /**
+ * Service class responsible for getting search results.
+ *
  * @author Tsvetan Dimitrov <tsvetan.dimitrov23@gmail.com>
  * @since 26-Jan-2017
  */
