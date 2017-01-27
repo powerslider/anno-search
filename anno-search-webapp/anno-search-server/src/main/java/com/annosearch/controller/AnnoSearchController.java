@@ -42,6 +42,7 @@ public class AnnoSearchController {
         return new ResponseEntity<>("Data successfully indexed", HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(
             value = "search/annotations",
             method = RequestMethod.GET,
@@ -52,6 +53,7 @@ public class AnnoSearchController {
         return new ResponseEntity<>(annMap, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(
             value = "search/docs",
             method = RequestMethod.GET,
@@ -65,6 +67,7 @@ public class AnnoSearchController {
         return new ResponseEntity<>(annDocList, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(
             value = "search/{id}",
             method = RequestMethod.GET,
